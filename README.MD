@@ -29,7 +29,7 @@ The circuit for an Arduino Uno:
 * Output: serial out on USB
 
 ### Output of i2cdetect -y 1 
-
+````shell
  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
 00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
 10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
@@ -39,7 +39,7 @@ The circuit for an Arduino Uno:
 50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
 70: -- -- -- 73 -- -- -- --                   
-
+````
 
 ### Laser Cut Sensor Module
 In order to place the sensors below the mirror you can use "Hardware Sensor Module\Mirror Gesture Module.ai" to cut out wholes of the right size for the APDS-9960 and GP2Y0A21YK sensor. The file contains three elements, in the order they need to be "printed":
