@@ -28,10 +28,15 @@
         "electron-rebuild": "latest",
         "i2c": "^0.2.5",
         "node-web-i2c": "latest",
-        "promise": "^8.1.0",
-        "onoff": "latest"
+        "onoff": "latest",
+        "promise": "^8.1.0"
     },
     "scripts": {
         "postinstall": "$(npm bin)/electron-rebuild"
+    },
+    "devDependencies": {
+        "eslint": "^7.28.0",
+        "eslint-config-airbnb-base": "^14.2.1",
+        "eslint-plugin-import": "^2.23.4"
     }
 }
