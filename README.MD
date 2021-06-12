@@ -1,8 +1,9 @@
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/thobach/MMM-Gestures.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/thobach/MMM-Gestures/alerts/)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/thobach/MMM-Gestures.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/thobach/MMM-Gestures/context:javascript)
 
-# MMM-Gestures
-Improved version that contains config instead hardcoded params.
+# MMM-Gestures-Modern
+Improved version that contains config instead hardcoded params. Also contains hardware that are connection tho the raspberry pi directly, without arduino, etc...
+
 
 MMM-Gestures is a head-less 3rd party module for [MagicMirror](https://github.com/MichMich/MagicMirror) that allows to control the Magic Mirror via gestures of two types of infrared sensors. Gestures can be up, down, left, right, far and close movements of the hand in front of a gesture sensor (APDS-9960) and present and away gestures in front of an IR distance sensor (GP2Y0A21YK).
 
@@ -15,20 +16,30 @@ MMM-Gestures is a head-less 3rd party module for [MagicMirror](https://github.co
 
 ## Hardware Setup
 In order to receive gesture events the following hardware is required:
-* Distance sensor: GP2Y0A21YK, incl. connector cable
-* Gesture sensor: APDS-9960 on breakout board with gesture sensor on one side, but no other electronic component on the same side for easier assembly (can be found on Aliexpress)
-* Micro-controller: Arduino (Uno), incl. USB cable
-* Jumper cable to connect APDS-9960 with Arduino
-* Pin headers to solder to connector cable of GP2Y0A21YK
-* Material to hold the sensors, e.g. laser cut sensor module from "Hardware Sensor Module\Mirror Gesture Module.ai"
+* Raspberry Pi )))
+* Distance sensor: GP2Y0E03 4-50CM, incl. connector cable [AliExpress](https://www.aliexpress.com/item/4000349362168.html?spm=a2g0s.9042311.0.0.27424c4dZI3iB7)
+* Gesture sensor: PAJ7620 on breakout board with gesture sensor on one side, but no other electronic component on the same side for easier assembly [Aliexpress](https://www.aliexpress.com/item/32908513196.html?spm=a2g0s.9042311.0.0.27424c4d55PK9P)
 
-### Arduino and Sensor Setup
-The Arduino collects gesture events from gesture sensor APDS-9960 and distance from distance sensor GP2Y0A21YK (10-80cm), which are then forwarded on the serial port as text.
+### Sensor Setup
+The Raspberry natively collects gesture events from gesture sensor PAJ7620 and distance from distance sensor GP2Y0E03, which are directly connected to the Raspberry.
 
 The circuit for an Arduino Uno:
 * Input 1: APDS-9960 on digital pin 2 (interrupt) + I2C (SDA on pin A4, SCL on pin A5) + GND & VCC (3.3V)
 * Input 2: GP2Y0A21YK on analog pin 0 (analog) + GND & VCC (5V)
 * Output: serial out on USB
+
+### Output of i2cdetect -y 1 
+
+ 0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+40: 40 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+70: -- -- -- 73 -- -- -- --                   
+
 
 ### Laser Cut Sensor Module
 In order to place the sensors below the mirror you can use "Hardware Sensor Module\Mirror Gesture Module.ai" to cut out wholes of the right size for the APDS-9960 and GP2Y0A21YK sensor. The file contains three elements, in the order they need to be "printed":
@@ -38,34 +49,13 @@ In order to place the sensors below the mirror you can use "Hardware Sensor Modu
 
 After wiring the sensors to the Arduino they can be glued to the first sheet from the back. Once dried, the other two to tree frames can be glued on the back of the first sheet.
 
-### Arduino Software Setup
-In order to compile you'll need to copy the following libraries to Arduino's library folder. The libraries are also included in this git repository.
-* RunningMedian library, taken from https://github.com/RobTillaart/Arduino/tree/master/libraries/RunningMedian
-* DistanceSensor library for GP2Y0A21YK, taken from https://github.com/jeroendoggen/Arduino-distance-sensor-library/tree/master/DistanceSensor
-* SparkFun_APDS9960 library for APDS-9960 gesture sensor, taken from https://github.com/sparkfun/APDS-9960_RGB_and_Gesture_Sensor
-
-### Arduino - Raspberry Pi Setup
-Once the Arduino is connected to both sensors and the software is setup it will send gesture events to the Raspberry Pi via USB. On the Raspberry Pi a Node.js programm will listen to these events and make them available via a WebSocket server.
-
-## Installation
-1. Navigate into your MagicMirror's `modules` folder and execute `git clone https://github.com/thobach/MMM-Gestures.git`.
-2. Install dependencies via: `cd MMM-Gestures && npm install`
-3. Follow below steps to install the Gestures Node.js App and add the module to your Magic Mirror configuration
-
-Note: If you use a Raspberry Pi 3 (vs. 2), e.g. on Raspbian Stretch, you may need to change the USB device name in https://github.com/thobach/MMM-Gestures/blob/master/node_helper.js#L104 from `ACM` to `USB`.
-
-### Gestures Node.js App on Raspberry Pi
-Communication between Raspberry Pi and Arduino happens via the serial port (USB). The `node-helper.js` app from this project creates the connection between the two systems (Raspberry Pi and Arduino), forwards gesture and distance events to the web user interface via the MagicMirror's built-in socket communication and also controls the HDMI display to save power if nobody has interacted with or stood in front of the mirror for 5 minutes.
-
 ### Embedding MMM-Gestures
 In order to load the MMM-Gestures module you will need to add the following configuration to your config/config.js file.
 ````javascript
 modules: [
 	        {
-            module: 'MMM-Gestures',
+            module: 'MMM-Gestures-Modern',
             config: {
-                uartName: "ttyUSB",
-                uartSpeed: 115200,
                 monitorSleepTimeOut: 60, //in seconds
                 showMessageWithReceivedGuesture: true
             }
